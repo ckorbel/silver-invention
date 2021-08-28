@@ -1,13 +1,13 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 
-const About: React.FC = () => {
+const BlogPage = () => {
   return (
     <div>
       <Navbar />
-      About page
+      This is be a blog page
     </div>
   );
 };
 
-export default About;
+export default BlogPage;
