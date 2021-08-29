@@ -1,6 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 
+const FooterStyled = styled.footer`
+  width: 100%;
+  background-color: #04091e;
+`;
+
 const SocialButtonsContainterStyled = styled.div`
   .fa {
     padding: 15px;
@@ -37,7 +42,7 @@ const SocialButtonsContainterStyled = styled.div`
 
 const Footer: React.FC = () => {
   return (
-    <footer>
+    <FooterStyled>
       <SocialButtonsContainterStyled>
         <a href="https://twitter.com/ckorbel15" className="fa fa-twitter"></a>
         <a
@@ -47,7 +52,7 @@ const Footer: React.FC = () => {
         <a href="#" className="fa fa-google"></a>
         <a href="https://github.com/ckorbel" className="fa fa-github"></a>
       </SocialButtonsContainterStyled>
-    </footer>
+    </FooterStyled>
   );
 };
 
