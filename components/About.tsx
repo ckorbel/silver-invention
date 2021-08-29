@@ -12,7 +12,7 @@ const About: React.FC = () => {
       <p>
         Hey, I'm Chris! I'm a software engineer with passion for highly
         performant data tools & products trying make it easy to understand
-        large, complex data usually with data visualization.
+        large, complex data with data visualization.
       </p>
     </AboutStyled>
   );
