@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 const AboutStyled = styled.div`
   background: #f9f9ff;
+  width: -webkit-fill-available;
 `;
 
 const About: React.FC = () => {

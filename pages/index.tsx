@@ -1,12 +1,22 @@
 import Head from "next/head";
+import styled from "styled-components";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import styles from "../styles/Home.module.css";
+
 import About from "../components/About";
 import { Blog } from "../types/blogtypes";
 import { fetchEntries } from "../utils/contentfulPosts";
-import BlogPosts from "../components/Posts";
 import Experiments from "../components/Experiments";
+import BlogCard from "../components/Posts";
+
+const PostContainerStyled = styled.div`
+  border: 1px solid blue;
+  display: grid;
+  gap: 32px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  width: -webkit-fill-available;
+`;
 
 export async function getStaticProps() {
   const posts: Blog[] = await fetchEntries();
@@ -40,7 +50,10 @@ export default function Home({ posts = [] }) {
       </Head>
       <Navbar />
       <About />
-      <BlogPosts posts={posts} />
+      <PostContainerStyled>
+        {posts &&
+          posts.map((post) => <BlogCard key={post.sys.id} post={post} />)}
+      </PostContainerStyled>
       <Experiments />
       <Footer />
     </div>

@@ -3,6 +3,7 @@ export interface Field {
   publishedDate: string;
   slug: string;
   title: string;
+  thumbNail: any; //todo
 }
 
 export interface Sys {
