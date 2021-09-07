@@ -1,13 +1,18 @@
 import React, { useState, useRef } from "react";
 import CirclePack from "../d3/CirclePack";
+import Navbar from "../components/Navbar";
+import { dataset } from "../d3/data";
 
 interface TeamSpendingProps {}
 
 const TeamSpending: React.FC<TeamSpendingProps> = () => {
-  const [data, setData] = useState<number[]>([25, 30, 45, 60, 20]);
+  const [data, setData] = useState<number[]>(dataset);
+  const sortedData = data.sort((a, b) => a - b);
+
   return (
     <React.Fragment>
-      <CirclePack data={data} />
+      <Navbar />
+      <CirclePack data={sortedData} scale="linear" />
       <button onClick={() => setData(data.map((value) => value + 5))}>
         Update data
       </button>

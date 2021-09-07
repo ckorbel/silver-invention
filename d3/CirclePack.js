@@ -1,108 +1,81 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as d3 from "d3";
 import ResizeObserver from "resize-observer-polyfill";
+import { dataset } from "./data";
+const scale = "quantile";
 
-const useResizeObserver = (ref) => {
-  const [dimensions, setDimensions] = useState(null);
-  useEffect(() => {
-    const observeTarget = ref.current;
-    const resizeObserver = new ResizeObserver((entries) => {
-      entries.forEach((entry) => {
-        setDimensions(entry.contentRect);
-      });
-    });
-    resizeObserver.observe(observeTarget);
-    return () => {
-      resizeObserver.unobserve(observeTarget);
-    };
-  }, [ref]);
-  return dimensions;
-};
-
-function BarChart({ data }) {
+function CirclePack({ data, scale }) {
   const svgRef = useRef();
   const wrapperRef = useRef();
-  const dimensions = useResizeObserver(wrapperRef);
+  // const dimensions = useResizeObserver(wrapperRef);
+  const dimensions = {
+    width: 600,
+    height: 150,
+  };
+
+  const box = 30;
+  dimensions.ctrWidth = dimensions.width - dimensions.margins * 2;
+  dimensions.ctrHeight = dimensions.height - dimensions.margins * 2;
 
   // will be called initially and on every data change
   useEffect(() => {
-    const svg = d3.select(svgRef.current);
-    console.log(dimensions);
+    console.log({ data });
+    const svg = d3
+      .select(svgRef.current)
+      .append("svg")
+      .attr("width", dimensions.width)
+      .attr("height", dimensions.height);
 
-    if (!dimensions) return;
+    // Scales
+    let colorScale;
+    if (scale === "linear") {
+      colorScale = d3
+        .scaleLinear()
+        .domain(d3.extent(data))
+        .range(["white", "red"]);
+    } else if (scale === "quantize") {
+      colorScale = d3
+        .scaleQuantize()
+        .domain(d3.extent(data))
+        .range(["white", "pink", "red"]);
+    } else if (scale === "quantile") {
+      colorScale = d3
+        .scaleQuantile()
+        .domain(data)
+        .range(["white", "pink", "red"]);
 
-    // scales
-    const xScale = d3
-      .scaleBand()
-      .domain(data.map((value, index) => index))
-      .range([0, dimensions.width]) // change
-      .padding(0.5);
-
-    const yScale = d3
-      .scaleLinear()
-      .domain([0, 150]) // todo
-      .range([dimensions.height, 0]); // change
-
-    const colorScale = d3
-      .scaleLinear()
-      .domain([75, 100, 150])
-      .range(["green", "orange", "red"])
-      .clamp(true);
-
-    // create x-axis
-    const xAxis = d3.axisBottom(xScale).ticks(data.length);
+      console.log("Quantize:", colorScale.quantiles());
+    } else if (scale === "threshold") {
+      // the threshold for upper class vs middle class
+      colorScale = d3
+        .scaleThreshold()
+        .domain([45200, 135600])
+        .range(d3.schemeOranges[3]);
+    }
+    // draw rectangles
     svg
-      .select(".x-axis")
-      .style("transform", `translateY(${dimensions.height}px)`)
-      .call(xAxis);
-
-    // create y-axis
-    const yAxis = d3.axisRight(yScale);
-    svg
-      .select(".y-axis")
-      .style("transform", `translateX(${dimensions.width}px)`)
-      .call(yAxis);
-
-    // draw the bars
-    svg
-      .selectAll(".bar")
+      .append("g")
+      .attr("transform", "translate(2, 2)")
+      .attr("stroke", "black")
+      .attr("fill", "#ddd")
+      .selectAll("rect")
       .data(data)
       .join("rect")
-      .attr("class", "bar")
-      .style("transform", "scale(1, -1)")
-      .attr("x", (value, index) => xScale(index))
-      .attr("y", -dimensions.height)
-      .attr("width", xScale.bandwidth())
-      .on("mouseenter", function (event, value) {
-        // events have changed in d3 v6:
-        // https://observablehq.com/@d3/d3v6-migration-guide#events
-        const index = svg.selectAll(".bar").nodes().indexOf(this);
-        svg
-          .selectAll(".tooltip")
-          .data([value])
-          .join((enter) => enter.append("text").attr("y", yScale(value) - 4))
-          .attr("class", "tooltip")
-          .text(value)
-          .attr("x", xScale(index) + xScale.bandwidth() / 2)
-          .attr("text-anchor", "middle")
-          .transition()
-          .attr("y", yScale(value) - 8)
-          .attr("opacity", 1);
-      })
-      .on("mouseleave", () => svg.select(".tooltip").remove())
-      .transition()
-      .attr("fill", colorScale)
-      .attr("height", (value) => dimensions.height - yScale(value));
-  }, [data, dimensions]);
+      .attr("width", box - 3)
+      .attr("height", box - 3)
+      .attr("x", (d, i) => box * (i % 20))
+      .attr("y", (d, i) => box * ((i / 20) | 0))
+      .attr("fill", (d) => colorScale(d));
+  }, [data]);
 
   return (
-    <div ref={wrapperRef} style={{ marginBottom: "2rem" }}>
-      <svg ref={svgRef}>
-        <g className="x-axis" />
-        <g className="y-axis" />
-      </svg>
+    <div
+      ref={wrapperRef}
+      style={{ marginBottom: "2rem", border: "1px solid red" }}
+    >
+      <svg ref={svgRef}></svg>
     </div>
   );
 }
 
-export default BarChart;
+export default CirclePack;
