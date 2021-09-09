@@ -1,29 +1,73 @@
 import React, { useState, useRef } from "react";
 import CirclePack from "../d3/CirclePack";
 import Navbar from "../components/Navbar";
-import { dataset } from "../d3/data";
+import * as dataset from "../d3/data/2017.json";
 
-interface TeamSpendingProps {}
+interface TeamSpendingProps {
+  [key: string]: TeamSpending;
+}
+
+interface TeamSpending {
+  [key: string]: string;
+  QB: string;
+  RB: string;
+  WR: string;
+  TE: string;
+  OL: string;
+  Offense: string;
+  DL: string;
+  LB: string;
+  S: string;
+  CB: string;
+  Defense: string;
+}
+
+const teams = ["Steelers", "Raiders", "Falcons", "Redskins"];
 
 const TeamSpending: React.FC<TeamSpendingProps> = () => {
-  const [data, setData] = useState<number[]>(dataset);
-  const sortedData = data.sort((a, b) => a - b);
+  const [data, setData] = useState<TeamSpendingProps>(dataset);
+  const [selectedTeam, setSelectedTeam] = useState<string>("Steelers");
+  console.log({ data });
+
+  const handleTeamUpdate = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ): void => {
+    setSelectedTeam(event.target.value);
+  };
+
+  const parseToNumber = (spending: { [key: string]: string }): any => {
+    const numberArr: Record<string, number | string>[] = [];
+    for (let key in spending) {
+      if (key !== "Team" && key !== "Offense" && key !== "Defense") {
+        const toNumber: number = Number(
+          spending[key].replace(/[^0-9.-]+/g, "")
+        );
+        const spendPrice = {
+          spendArea: key,
+          amount: toNumber,
+        };
+        numberArr.push(spendPrice);
+      }
+    }
+    return numberArr;
+  };
 
   return (
     <React.Fragment>
       <Navbar />
-      <CirclePack data={sortedData} scale="linear" />
-      <button onClick={() => setData(data.map((value) => value + 5))}>
-        Update data
-      </button>
-      <button onClick={() => setData(data.filter((value) => value < 35))}>
-        Filter data
-      </button>
-      <button
-        onClick={() => setData([...data, Math.round(Math.random() * 100)])}
-      >
-        Add data
-      </button>
+      <select value={selectedTeam} onChange={handleTeamUpdate}>
+        {teams &&
+          teams.map((team) => (
+            <option key={team} value={team}>
+              {team}
+            </option>
+          ))}
+      </select>
+      <CirclePack
+        data={parseToNumber(data[selectedTeam])}
+        team={selectedTeam}
+      />
+      <button onClick={() => console.log(data)}>Update data</button>
     </React.Fragment>
   );
 };
