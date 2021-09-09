@@ -47,10 +47,12 @@ function CirclePack({ data, team }) {
       .range(d3.schemeSet1);
 
     // Size scale for spending categories
-    const size = d3
-      .scaleLinear()
-      .domain(d3.extent(data, radiusAcessor))
-      .range([10, 100]); // circle will be between 7 and 55 px wide
+    // const size = d3
+    //   .scaleLinear()
+    //   .domain(d3.extent(data, radiusAcessor))
+    //   .range([10, 100]); // circle will be between 7 and 55 px wide
+
+    const size = d3.scaleLinear().domain([2913937, 100426870]).range([15, 250]);
 
     // create a tooltip
     const Tooltip = d3
