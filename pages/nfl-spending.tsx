@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import CirclePack from "../d3/CirclePack";
 import Navbar from "../components/Navbar";
 import * as dataset from "../d3/data/2017.json";
+import Sidebar from "../components/Sidebar";
 
 interface TeamSpendingProps {
   [key: string]: TeamSpending;
@@ -56,13 +57,14 @@ const TeamSpending: React.FC<TeamSpendingProps> = () => {
     <React.Fragment>
       <Navbar />
       <select value={selectedTeam} onChange={handleTeamUpdate}>
-        {teams &&
-          teams.map((team) => (
+        {dataset &&
+          Object.keys(dataset).map((team) => (
             <option key={team} value={team}>
               {team}
             </option>
           ))}
       </select>
+      <Sidebar teams={Object.keys(dataset)} />
       <CirclePack
         data={parseToNumber(data[selectedTeam])}
         team={selectedTeam}
