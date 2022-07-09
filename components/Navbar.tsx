@@ -40,7 +40,8 @@ const Navbar: React.FC = () => {
       <RightContainerStyled>
         <NextLink href="/about">About</NextLink>
         <NextLink href="/blog">Blog</NextLink>
-        <NextLink href="/wealth-visual">Visualizer</NextLink>
+        {/* <NextLink href="/wealth-visual">Visualizer</NextLink> */}
+        <NextLink href="/experiments">Experiment</NextLink>
       </RightContainerStyled>
     </NavStyled>
   );
