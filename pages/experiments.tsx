@@ -1,23 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { PlayerData } from "../api/playerTypes";
 import PieChart from "../highcharts/PieChat";
 
-interface PlayerData {
-  name: string;
-  position: string;
-  original_team: string;
-  draft_year: number;
-  draft_round: number;
-  draft_pick: number;
-  max_year: string;
-  first_team_all_pro: number;
-  pro_bowls: number;
-  years_as_primary_starter: number;
-  weighted_career_approximate_value: number;
-  value_for_draft_team: number;
+interface DraftPercentage {
+  [key: string]: number;
+}
+
+function formatDraftRound(players: PlayerData[]) {
+  const proBowlsPerPlayer: DraftPercentage = {};
+  const totalProbowls: DraftPercentage = {};
+  for (let player of players) {
+    const { draft_round, pro_bowls } = player || {};
+    if (draft_round in proBowlsPerPlayer) {
+      proBowlsPerPlayer[draft_round] += 1;
+      totalProbowls[draft_round] += pro_bowls;
+    } else {
+      proBowlsPerPlayer[draft_round] = 1;
+      totalProbowls[draft_round] = pro_bowls;
+    }
+  }
+  return Object.keys(totalProbowls).map((draftRound: string) => {
+    return {
+      name: draftRound,
+      y: totalProbowls[draftRound],
+      totalProbowls: totalProbowls[draftRound],
+      proBowlsPerPlayer: proBowlsPerPlayer[draftRound],
+    };
+  });
 }
 
 const Experiments: React.FC = ({}) => {
+  const [position, setPosition] = useState<string>("QB");
   const [players, setPlayers] = useState<PlayerData[]>([]);
   useEffect(() => {
     async function getDraftPlayers(): Promise<void> {
@@ -29,14 +42,17 @@ const Experiments: React.FC = ({}) => {
       );
 
       const players: PlayerData[] = await response.json();
-      console.log({ players });
       setPlayers(players);
     }
     getDraftPlayers();
   }, []);
+
   return (
     <>
-      <PieChart />
+      <PieChart
+        title="Draft Round as Percent of Pro-Bowls by Position"
+        data={formatDraftRound(players)}
+      />
     </>
   );
 };
