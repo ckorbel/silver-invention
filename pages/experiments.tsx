@@ -1,12 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { PlayerData } from "../api/playerTypes";
+import { useQuery, useQueryClient } from "react-query";
+import fetchDraftPlayers from "../api/draftPlayers";
+import {
+  ChartData,
+  PlayerData,
+  Position,
+  SuccessMetric,
+} from "../api/playerTypes";
+import ControlBoard from "../components/ControlBoard";
 import PieChart from "../highcharts/PieChat";
 
 interface DraftPercentage {
   [key: string]: number;
 }
 
-function formatDraftRound(players: PlayerData[]) {
+function formatDraftRound(
+  players: PlayerData[] | undefined
+): ChartData[] | null {
+  if (!players) return null;
   const proBowlsPerPlayer: DraftPercentage = {};
   const totalProbowls: DraftPercentage = {};
   for (let player of players) {
@@ -29,29 +40,38 @@ function formatDraftRound(players: PlayerData[]) {
   });
 }
 
-const Experiments: React.FC = ({}) => {
-  const [position, setPosition] = useState<string>("QB");
-  const [players, setPlayers] = useState<PlayerData[]>([]);
-  useEffect(() => {
-    async function getDraftPlayers(): Promise<void> {
-      const response = await fetch(
-        `http://localhost:4000/players?position=QB`,
-        {
-          method: "GET",
-        }
-      );
+const Experiments: React.FC = () => {
+  const [position, setPosition] = useState<Position>("QB");
+  const [successMetric, setSuccessMetric] = // really prettier??
+    useState<SuccessMetric>("pro_bowls");
 
-      const players: PlayerData[] = await response.json();
-      setPlayers(players);
-    }
-    getDraftPlayers();
-  }, []);
+  const { data, error, isLoading } = useQuery(
+    ["players", position],
+    () => fetchDraftPlayers(position),
+    { staleTime: Infinity } // draft data should be unchanged
+  );
+
+  if (isLoading) {
+    // TODO spinner
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    // TODO useful error message
+    return <p>Whoops something is not working right</p>;
+  }
 
   return (
     <>
+      <ControlBoard
+        position={position}
+        setPosition={setPosition}
+        successMetric={successMetric}
+        setSuccessMetric={setSuccessMetric}
+      />
       <PieChart
         title="Draft Round as Percent of Pro-Bowls by Position"
-        data={formatDraftRound(players)}
+        data={formatDraftRound(data)}
       />
     </>
   );

@@ -10,7 +10,7 @@ interface DraftNumbers {
 }
 interface ExperimentsProps {
   title: string;
-  data: DraftNumbers[];
+  data: DraftNumbers[] | null;
 }
 
 const Experiments: React.FC<ExperimentsProps> = ({ title = "", data }) => {
@@ -44,7 +44,7 @@ const Experiments: React.FC<ExperimentsProps> = ({ title = "", data }) => {
       {
         type: "pie",
         colorByPoint: true,
-        data,
+        data: data || [],
       },
     ],
   };
