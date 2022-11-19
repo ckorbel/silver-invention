@@ -55,6 +55,7 @@ export type Position =
 
 export type SuccessMetric =
   | "pro_bowls"
+  | "pro_bowls_per_player"
   | "first_team_all_pro"
   | "years_as_primary_starter"
   | "weighted_career_approximate_value"

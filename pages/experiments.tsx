@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "react-query";
+import React, { useState } from "react";
+import { useQuery } from "react-query";
+import styled from "styled-components";
 import fetchDraftPlayers from "../api/draftPlayers";
 import {
   ChartData,
@@ -7,12 +8,23 @@ import {
   Position,
   SuccessMetric,
 } from "../api/playerTypes";
-import ControlBoard from "../components/ControlBoard";
+import ControlBoard from "../components/ExperimentComponents/ControlBoard";
+import ExperimentSidebar from "../components/ExperimentComponents/ExperimentSidebar";
 import PieChart from "../highcharts/PieChat";
 
 interface DraftPercentage {
   [key: string]: number;
 }
+
+const ContentStyled = styled.div`
+  display: table;
+`;
+
+const VisualsContainer = styled.div`
+  display: table-cell;
+  width: 85%;
+  vertical-align: top;
+`;
 
 function formatDraftRound(
   players: PlayerData[] | undefined
@@ -20,7 +32,7 @@ function formatDraftRound(
   if (!players) return null;
   const proBowlsPerPlayer: DraftPercentage = {};
   const totalProbowls: DraftPercentage = {};
-  for (let player of players) {
+  for (const player of players) {
     const { draft_round, pro_bowls } = player || {};
     if (draft_round in proBowlsPerPlayer) {
       proBowlsPerPlayer[draft_round] += 1;
@@ -69,10 +81,15 @@ const Experiments: React.FC = () => {
         successMetric={successMetric}
         setSuccessMetric={setSuccessMetric}
       />
-      <PieChart
-        title="Draft Round as Percent of Pro-Bowls by Position"
-        data={formatDraftRound(data)}
-      />
+      <ContentStyled>
+        <ExperimentSidebar />
+        <VisualsContainer>
+          <PieChart
+            title="Draft Round as Percent of Pro-Bowls by Position"
+            data={formatDraftRound(data)}
+          />
+        </VisualsContainer>
+      </ContentStyled>
     </>
   );
 };

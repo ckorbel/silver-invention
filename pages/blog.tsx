@@ -13,7 +13,7 @@ export async function getStaticProps() {
   };
 }
 
-const BlogPage: React.FC<BlogPageProps> = ({ posts = [] }) => {
+const BlogPage: React.FC<BlogPageProps> = (  { posts = [] }) => {
   return (
     <div>
       <Navbar />
