@@ -1,1 +1,1 @@
-Just trying to finally make a portfolio site will hopefully include some fun data visualization
+This repo is just experimental prototype stuff with React, Next.js and Data vizualation tools. It's fairly unorganized and chaotic at the moment. There's a ton of different 3rd library some components use styled components, some material UI, others tailwind. It's really all over the place. If it every turn into something useful I can clean up, but it probably won't. 
