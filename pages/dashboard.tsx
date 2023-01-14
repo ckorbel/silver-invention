@@ -1,9 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import { tokens } from "../theme";
-
-import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
+// import { makeStyles } from "@material-ui/core/styles";
+import {
+  Box,
+  makeStyles,
+  Button,
+  MenuItem,
+  FormControl,
+  IconButton,
+  InputLabel,
+  Select,
+  Typography,
+  Checkbox,
+  ListItemIcon,
+  ListItemText,
+  useTheme,
+} from "@mui/material";
 import { mockTransactions } from "../data/mockData";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmailIcon from "@mui/icons-material/Email";
@@ -16,10 +30,30 @@ import GeographyChart from "../components/nivo-viz-components/GeographChart";
 import BarChart from "../components/nivo-viz-components/BarChart";
 import StatBox from "../components/nivo-viz-components/StatBox";
 import ProgressCircle from "../components/nivo-viz-components/ProgressCircle";
+import { useQuery } from "react-query";
+import fetchDraftPlayers from "../api/draftPlayers";
+import percentPerRound, {
+  DraftRoundPercentage,
+} from "../utils/roundPercentage";
 
 function Dashboard(): React.ReactNode {
+  const [selected, setSelected] = useState<string>("");
+  let playerPercentage: DraftRoundPercentage[] = [];
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
+  const { data, error, isLoading } = useQuery(
+    ["players", "QB"],
+    () => fetchDraftPlayers("QB"),
+    { staleTime: Infinity } // draft data should be unchanged
+  );
+
+  console.log({ data, error, isLoading });
+
+  if (data) {
+    playerPercentage = percentPerRound(data);
+  }
+
   return (
     <div className="app">
       <Sidebar />
@@ -34,18 +68,18 @@ function Dashboard(): React.ReactNode {
           >
             <Header title="DASHBOARD" subtitle="Welcome to your dashboard" />
 
-            <Box>
-              <Button
-                sx={{
-                  backgroundColor: colors.blueAccent[700],
-                  color: colors.grey[100],
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  padding: "10px 20px",
-                }}
-              >
+            <Box
+              sx={{
+                backgroundColor: colors.blueAccent[700],
+                color: colors.grey[100],
+                fontSize: "14px",
+                fontWeight: "bold",
+                padding: "10px 20px",
+              }}
+            >
+              <Button>
                 <DownloadOutlinedIcon sx={{ mr: "10px" }} />
-                Download Reports
+                Select Positions
               </Button>
             </Box>
           </Box>
@@ -209,9 +243,44 @@ function Dashboard(): React.ReactNode {
                   variant="h5"
                   fontWeight="600"
                 >
-                  Recent Transactions
+                  Percent Per Round Breakdown
                 </Typography>
               </Box>
+              {playerPercentage.map(
+                ({ draftRound, totalDraftedPlayers, percentageOfTotal }) => (
+                  <Box
+                    key={draftRound}
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    borderBottom={`4px solid ${colors.primary[500]}`}
+                    p="15px"
+                  >
+                    <Box>
+                      <Typography color={colors.grey[100]}>
+                        Round: {draftRound}
+                      </Typography>
+                      <Typography
+                        color={colors.greenAccent[500]}
+                        variant="h5"
+                        fontWeight="600"
+                      >
+                        {totalDraftedPlayers}
+                      </Typography>
+                    </Box>
+                    {/* <Box color={colors.grey[100]}>{transaction.date}</Box> */}
+                    <Box
+                      p="10px"
+                      borderRadius="4px"
+                      sx={{
+                        backgroundColor: colors.greenAccent[500],
+                      }}
+                    >
+                      {percentageOfTotal}%
+                    </Box>
+                  </Box>
+                )
+              )}
               {mockTransactions.map((transaction, i) => (
                 <Box
                   key={`${transaction.txId}-${i}`}

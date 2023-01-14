@@ -2,7 +2,6 @@ import "../styles/globals.css";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ColorModeContext, useMode } from "../theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
-import Topbar from "../components/Topbar";
 
 const queryClient = new QueryClient();
 

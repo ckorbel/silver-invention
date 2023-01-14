@@ -132,13 +132,16 @@ const Sidebar: React.FC = () => {
           )}
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
-            <Item
-              title="Dashboard"
-              to="/"
-              icon={<HomeOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+            <NextLink href="/">
+              <MenuItem
+                style={{
+                  color: colors.grey[100],
+                }}
+                icon={<HomeOutlinedIcon />}
+              >
+                <Typography>Home</Typography>
+              </MenuItem>
+            </NextLink>
 
             <Typography
               variant="h6"
