@@ -1,14 +1,25 @@
 import { PlayerData, Position } from "./playerTypes";
 
-async function fetchDraftPlayers(position: Position): Promise<PlayerData[]> {
-  const response = await fetch(
-    `http://localhost:4000/players?position=${position}`,
-    {
-      method: "GET",
-    }
-  );
+const baseUrl = "http://localhost:4000";
+
+// just get the whole DB
+async function fetchAllPlayers(): Promise<PlayerData[]> {
+  const response = await fetch(`${baseUrl}/players`, {
+    method: "GET",
+  });
+
+  const players = await response.json();
+  return players;
+}
+
+async function fetchAllDraftPicksForSpecificTeam(
+  team: string
+): Promise<PlayerData[]> {
+  const response = await fetch(`${baseUrl}/teams?team=${team}`, {
+    method: "GET",
+  });
 
   return await response.json();
 }
 
-export default fetchDraftPlayers;
+export { fetchAllPlayers, fetchAllDraftPicksForSpecificTeam };

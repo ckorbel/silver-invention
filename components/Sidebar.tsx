@@ -8,7 +8,6 @@ import { tokens } from "../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
@@ -19,42 +18,40 @@ import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 
 interface ItemProps {
   title: string;
-  to: string;
   icon: React.ReactNode;
   selected: string;
   setSelected: (title: string) => void;
 }
 
-const Item: React.FC<ItemProps> = ({
-  title,
-  to,
-  icon,
-  selected,
-  setSelected,
-}) => {
+const Item: React.FC<ItemProps> = ({ title, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  console.log(selected === title, title, selected);
   return (
     <MenuItem
-      active={selected === title}
+      // todo this doesnt work its annoying figure out why not
+      // active={selected === title}
       style={{
-        color: colors.grey[100],
+        color: selected === title ? "#6870fa" : colors.grey[100],
+        // color: colors.grey[100],
       }}
       onClick={() => setSelected(title)}
       icon={icon}
     >
-      <NextLink href={to}>
-        <Typography>{title}</Typography>
-      </NextLink>
+      <Typography>{title}</Typography>
     </MenuItem>
   );
 };
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  updateFilterType: (filterType: string) => void;
+  filter: string;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ updateFilterType, filter }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState<boolean>(false);
-  const [selected, setSelected] = useState<string>("Dashboard");
 
   return (
     <Box
@@ -148,30 +145,20 @@ const Sidebar: React.FC = () => {
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Data
+              Search By
             </Typography>
             <Item
-              title="Manage Team"
-              to="/team"
+              title="Position"
               icon={<PeopleOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              selected={filter}
+              setSelected={updateFilterType}
             />
             <Item
-              title="Contacts Information"
-              to="/contacts"
+              title="Team"
               icon={<ContactsOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              selected={filter}
+              setSelected={updateFilterType}
             />
-            <Item
-              title="Invoices Balances"
-              to="/invoices"
-              icon={<ReceiptOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
-
             <Typography
               variant="h6"
               color={colors.grey[300]}
@@ -181,24 +168,21 @@ const Sidebar: React.FC = () => {
             </Typography>
             <Item
               title="Profile Form"
-              to="/form"
               icon={<PersonOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              selected={filter}
+              setSelected={updateFilterType}
             />
             <Item
               title="Calendar"
-              to="/calendar"
               icon={<CalendarTodayOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              selected={filter}
+              setSelected={updateFilterType}
             />
             <Item
               title="FAQ Page"
-              to="/faq"
               icon={<HelpOutlineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              selected={filter}
+              setSelected={updateFilterType}
             />
 
             <Typography
@@ -210,31 +194,27 @@ const Sidebar: React.FC = () => {
             </Typography>
             <Item
               title="Bar Chart"
-              to="/bar"
               icon={<BarChartOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              selected={filter}
+              setSelected={updateFilterType}
             />
             <Item
               title="Pie Chart"
-              to="/pie"
               icon={<PieChartOutlineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              selected={filter}
+              setSelected={updateFilterType}
             />
             <Item
               title="Line Chart"
-              to="/line"
               icon={<TimelineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              selected={filter}
+              setSelected={updateFilterType}
             />
             <Item
               title="Geography Chart"
-              to="/geography"
               icon={<MapOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              selected={filter}
+              setSelected={updateFilterType}
             />
           </Box>
         </Menu>

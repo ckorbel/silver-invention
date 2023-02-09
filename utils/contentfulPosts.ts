@@ -2,8 +2,8 @@ const space = process.env.NEXT_PULBIC_CONTENTFUL_SPACE_ID;
 const accessToken = process.env.NEXT_PUBLIC_CONTENTFUL_ACCESS_TOKEN;
 
 const client = require("contentful").createClient({
-  space: space,
-  accessToken: accessToken,
+  space,
+  accessToken,
 });
 
 export async function fetchEntries() {

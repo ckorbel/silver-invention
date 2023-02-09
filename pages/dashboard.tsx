@@ -2,23 +2,7 @@ import React, { useState } from "react";
 import Sidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import { tokens } from "../theme";
-// import { makeStyles } from "@material-ui/core/styles";
-import {
-  Box,
-  makeStyles,
-  Button,
-  MenuItem,
-  FormControl,
-  IconButton,
-  InputLabel,
-  Select,
-  Typography,
-  Checkbox,
-  ListItemIcon,
-  ListItemText,
-  useTheme,
-} from "@mui/material";
-import { mockTransactions } from "../data/mockData";
+import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import EmailIcon from "@mui/icons-material/Email";
 import PointOfSaleIcon from "@mui/icons-material/PointOfSale";
@@ -26,37 +10,38 @@ import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import TrafficIcon from "@mui/icons-material/Traffic";
 import Header from "../components/nivo-viz-components/Header";
 import LineChart from "../components/nivo-viz-components/LineChart";
-import GeographyChart from "../components/nivo-viz-components/GeographChart";
 import BarChart from "../components/nivo-viz-components/BarChart";
 import StatBox from "../components/nivo-viz-components/StatBox";
 import ProgressCircle from "../components/nivo-viz-components/ProgressCircle";
 import { useQuery } from "react-query";
-import fetchDraftPlayers from "../api/draftPlayers";
+import { fetchAllPlayers } from "../api/draftPlayers";
 import percentPerRound, {
   DraftRoundPercentage,
 } from "../utils/roundPercentage";
 
 function Dashboard(): React.ReactNode {
-  const [selected, setSelected] = useState<string>("");
+  const [filterType, setFilterType] = useState<string>("Position");
   let playerPercentage: DraftRoundPercentage[] = [];
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const { data, error, isLoading } = useQuery(
-    ["players", "QB"],
-    () => fetchDraftPlayers("DE"),
+    "players",
+    () => fetchAllPlayers(),
     { staleTime: Infinity } // draft data should be unchanged
   );
-
-  console.log({ data, error, isLoading });
 
   if (data) {
     playerPercentage = percentPerRound(data);
   }
 
+  function updateFilters(filter: string): void {
+    setFilterType(filter);
+  }
+
   return (
     <div className="app">
-      <Sidebar />
+      <Sidebar updateFilterType={updateFilters} filter={filterType} />
       <main className="content">
         <Topbar />
         <Box m="20px">
