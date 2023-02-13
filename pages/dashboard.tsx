@@ -18,6 +18,7 @@ import { fetchAllPlayers } from "../api/draftPlayers";
 import percentPerRound, {
   DraftRoundPercentage,
 } from "../utils/roundPercentage";
+import filterPlayers, { Player } from "../utils/filterPlayers";
 
 function Dashboard(): React.ReactNode {
   const [filterType, setFilterType] = useState<string>("Position");
@@ -32,7 +33,11 @@ function Dashboard(): React.ReactNode {
   );
 
   if (data) {
-    playerPercentage = percentPerRound(data);
+    // playerPercentage = percentPerRound(data);
+    const filteredPlayers: Player[] = filterPlayers(data, {
+      position: "QB",
+      team: null,
+    });
   }
 
   function updateFilters(filter: string): void {

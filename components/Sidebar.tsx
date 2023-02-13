@@ -30,10 +30,9 @@ const Item: React.FC<ItemProps> = ({ title, icon, selected, setSelected }) => {
   return (
     <MenuItem
       // todo this doesnt work its annoying figure out why not
-      // active={selected === title}
+      active={selected === title}
       style={{
-        color: selected === title ? "#6870fa" : colors.grey[100],
-        // color: colors.grey[100],
+        color: colors.grey[100],
       }}
       onClick={() => setSelected(title)}
       icon={icon}
@@ -153,6 +152,20 @@ const Sidebar: React.FC<SidebarProps> = ({ updateFilterType, filter }) => {
               selected={filter}
               setSelected={updateFilterType}
             />
+            {/* turn in child menu */}
+            <Item
+              title="QB"
+              icon={<PeopleOutlinedIcon />}
+              selected={filter}
+              setSelected={updateFilterType}
+            />
+            <Item
+              title="RB"
+              icon={<PeopleOutlinedIcon />}
+              selected={filter}
+              setSelected={updateFilterType}
+            />
+            {/* turn in child menu */}
             <Item
               title="Team"
               icon={<ContactsOutlinedIcon />}
