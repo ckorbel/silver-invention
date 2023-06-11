@@ -34,7 +34,6 @@ function CirclePack({ data, team }) {
 
   // will be called initially and on every data change
   useEffect(() => {
-    console.log({ data });
     const svg = d3
       .select(wrapperRef.current)
       .append("svg")

@@ -38,17 +38,14 @@ function Dashboard(): React.ReactNode {
       position: "QB",
       team: null,
     });
-  }
-
-  function updateFilters(filter: string): void {
-    setFilterType(filter);
+    console.log({ filteredPlayers });
   }
 
   return (
     <div className="app">
-      <Sidebar updateFilterType={updateFilters} filter={filterType} />
+      <Sidebar updateFilterType={setFilterType} filter={filterType} />
       <main className="content">
-        <Topbar />
+        <Topbar shouldDisplaySearchBar={true} />
         <Box m="20px">
           {/* HEADER */}
           <Box
@@ -166,8 +163,16 @@ function Dashboard(): React.ReactNode {
                 }
               />
             </Box>
+            {/* ROW 3 */}
+            <Box
+              gridColumn="span 12"
+              gridRow="span 3"
+              sx={{
+                backgroundColor: colors.primary[400],
+              }}
+            ></Box>
 
-            {/* ROW 2 */}
+            {/* ROW 3 */}
             <Box
               gridColumn="span 12"
               gridRow="span 3"

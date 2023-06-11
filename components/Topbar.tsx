@@ -6,7 +6,11 @@ import DarkModeOutLinedIcon from "@mui/icons-material/DarkModeOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutline";
 
-const Topbar: React.FC = () => {
+interface TopbarProps {
+  shouldDisplaySearchBar?: boolean;
+}
+
+const Topbar: React.FC<TopbarProps> = ({ shouldDisplaySearchBar = false }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
@@ -19,10 +23,14 @@ const Topbar: React.FC = () => {
         borderRadius="3px"
         sx={{ backgroundColor: colors.primary[400] }}
       >
-        <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
-        <IconButton type="button" sx={{ p: 1 }}>
-          <SearchIcon />
-        </IconButton>
+        {shouldDisplaySearchBar ? (
+          <>
+            <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
+            <IconButton type="button" sx={{ p: 1 }}>
+              <SearchIcon />
+            </IconButton>
+          </>
+        ) : null}
       </Box>
       {/* ICONS */}
       <Box display="flex">

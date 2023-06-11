@@ -1,95 +1,54 @@
-import React, { useState } from "react";
-import { useQuery } from "react-query";
-import styled from "styled-components";
-import fetchDraftPlayers from "../api/draftPlayers";
-import {
-  ChartData,
-  PlayerData,
-  Position,
-  SuccessMetric,
-} from "../api/playerTypes";
-import ControlBoard from "../components/ExperimentComponents/ControlBoard";
-import ExperimentSidebar from "../components/ExperimentComponents/ExperimentSidebar";
-import PieChart from "../highcharts/PieChat";
+import React, { useEffect, useState, useCallback } from "react";
+import { arc, csvParse, DSVRowArray } from "d3";
 
-interface DraftPercentage {
-  [key: string]: number;
+interface MousPosition {
+  x: number;
+  y: number;
 }
 
-const ContentStyled = styled.div`
-  display: table;
-`;
+const width = 960;
+const height = 550;
+const circleRadius = 30;
 
-const VisualsContainer = styled.div`
-  display: table-cell;
-  width: 85%;
-  vertical-align: top;
-`;
+const initialMousePosition = { x: width / 2, y: height / 2 };
 
-function formatDraftRound(
-  players: PlayerData[] | undefined
-): ChartData[] | null {
-  if (!players) return null;
-  const proBowlsPerPlayer: DraftPercentage = {};
-  const totalProbowls: DraftPercentage = {};
-  for (const player of players) {
-    const { draft_round, pro_bowls } = player || {};
-    if (draft_round in proBowlsPerPlayer) {
-      proBowlsPerPlayer[draft_round] += 1;
-      totalProbowls[draft_round] += pro_bowls;
-    } else {
-      proBowlsPerPlayer[draft_round] = 1;
-      totalProbowls[draft_round] = pro_bowls;
-    }
-  }
-  return Object.keys(totalProbowls).map((draftRound: string) => {
-    return {
-      name: draftRound,
-      y: totalProbowls[draftRound],
-      totalProbowls: totalProbowls[draftRound],
-      proBowlsPerPlayer: proBowlsPerPlayer[draftRound],
-    };
-  });
-}
+const url: string =
+  "https://gist.githubusercontent.com/curran/b236990081a24761f7000567094914e0/raw/acd2b8cecfe51c520622fbaf407ee88b8796bfc6/cssNamedColors.csv";
 
 const Experiments: React.FC = () => {
-  const [position, setPosition] = useState<Position>("QB");
-  const [successMetric, setSuccessMetric] = // really prettier??
-    useState<SuccessMetric>("pro_bowls");
+  const [mousePosition, setMousePosition] =
+    useState<MousPosition>(initialMousePosition);
+  async function fetchText(): Promise<DSVRowArray<string>> {
+    const response = await fetch(url, {
+      method: "GET",
+    });
+    const text = await response.text();
+    const data = csvParse(text);
+    let message = "";
+    message = message + Math.round(text.length / 1024) + "kb\n";
+    message = message + data.length + " rows\n";
+    message = message + data.columns.length + " columns\n";
+    document.body.textContent = message;
+    return csvParse(text);
+  }
 
-  const { data, error, isLoading } = useQuery(
-    ["players", position],
-    () => fetchDraftPlayers(position),
-    { staleTime: Infinity } // draft data should be unchanged
+  useEffect(() => {
+    fetchText();
+  }, []);
+
+  const handleMouseMove = useCallback(
+    (event: any) => {
+      const { clientX: x, clientY: y } = event;
+      setMousePosition({ x, y });
+    },
+    [setMousePosition]
   );
-
-  if (isLoading) {
-    // TODO spinner
-    return <p>Loading...</p>;
-  }
-
-  if (error) {
-    // TODO useful error message
-    return <p>Whoops something is not working right</p>;
-  }
 
   return (
     <>
-      <ControlBoard
-        position={position}
-        setPosition={setPosition}
-        successMetric={successMetric}
-        setSuccessMetric={setSuccessMetric}
-      />
-      <ContentStyled>
-        <ExperimentSidebar />
-        <VisualsContainer>
-          <PieChart
-            title="Draft Round as Percent of Pro-Bowls by Position"
-            data={formatDraftRound(data)}
-          />
-        </VisualsContainer>
-      </ContentStyled>
+      <svg width={width} height={height} onMouseMove={handleMouseMove}>
+        <circle cx={mousePosition.x} cy={mousePosition.y} r={circleRadius} />
+      </svg>
     </>
   );
 };

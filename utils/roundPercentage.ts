@@ -1,3 +1,4 @@
+import { ChartData } from "../api/playerTypes";
 import PlayerData from "../types/playerData";
 
 export interface DraftRoundPercentage {
@@ -40,4 +41,30 @@ export default function percentPerRound(
   return draftRounds.sort(
     (a, b) => b.totalDraftedPlayers - a.totalDraftedPlayers
   );
+}
+
+function formatDraftRound(
+  players: PlayerData[] | undefined
+): ChartData[] | null {
+  if (!players) return null;
+  const proBowlsPerPlayer: DraftPercentage = {};
+  const totalProbowls: DraftPercentage = {};
+  for (const player of players) {
+    const { draft_round, pro_bowls } = player || {};
+    if (draft_round in proBowlsPerPlayer) {
+      proBowlsPerPlayer[draft_round] += 1;
+      totalProbowls[draft_round] += pro_bowls;
+    } else {
+      proBowlsPerPlayer[draft_round] = 1;
+      totalProbowls[draft_round] = pro_bowls;
+    }
+  }
+  return Object.keys(totalProbowls).map((draftRound: string) => {
+    return {
+      name: draftRound,
+      y: totalProbowls[draftRound],
+      totalProbowls: totalProbowls[draftRound],
+      proBowlsPerPlayer: proBowlsPerPlayer[draftRound],
+    };
+  });
 }

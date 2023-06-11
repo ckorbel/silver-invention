@@ -28,7 +28,6 @@ export async function getStaticProps() {
 }
 
 export default function Home({ posts = [] }) {
-  console.log({ posts }); // todo get an image with blog post meta data
   return (
     <div className={styles.container}>
       <Head>

@@ -15,6 +15,23 @@ import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import styled from "styled-components";
+
+const MenuItemStyled = styled.li`
+  color: #e0e0e0;
+  font-size: 15px;
+`;
+
+const MenuItem2 = () => {
+  return (
+    <li>
+      <div>
+        <span></span>
+        <span></span>
+      </div>
+    </li>
+  );
+};
 
 interface ItemProps {
   title: string;
@@ -26,10 +43,9 @@ interface ItemProps {
 const Item: React.FC<ItemProps> = ({ title, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  console.log(selected === title, title, selected);
   return (
     <MenuItem
-      // todo this doesnt work its annoying figure out why not
+      //   // todo this doesnt work its annoying figure out why not
       active={selected === title}
       style={{
         color: colors.grey[100],

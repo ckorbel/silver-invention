@@ -28,7 +28,6 @@ const teams = ["Steelers", "Raiders", "Falcons", "Redskins"];
 const TeamSpending: React.FC<TeamSpendingProps> = () => {
   const [data, setData] = useState<TeamSpendingProps>(dataset);
   const [selectedTeam, setSelectedTeam] = useState<string>("Steelers");
-  console.log({ data });
 
   const handleTeamUpdate = (
     event: React.ChangeEvent<HTMLSelectElement>
